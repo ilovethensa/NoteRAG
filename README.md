@@ -1,36 +1,39 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# NoteRAG
+
+Previously, I found myself constantly copying useful snippets from Reddit comments or articles and sending them to a Discord channel. When I needed to find something, I'd have to manually search through countless messages. I wanted to switch to a more efficient system, but all the existing RAG chat UIs were either too complex, too large, or didn't fit my simple needs. This project was born out of the desire for a straightforward solution: a place where I can just paste snippets and then easily query them with an LLM.
 
 ## Getting Started
 
-First, run the development server:
+### Prerequisites
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+-   **Docker**: Make sure Docker Desktop (or Docker Engine) is installed and running on your machine. You can get it from [here](https://docs.docker.com/get-docker/).
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### Quick Start with Docker Compose
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+1.  **Clone the repository**:
+    ```bash
+    git clone https://github.com/your-username/rag.git
+    cd rag
+    ```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+2.  **Set your OpenAI API Key**:
+    You need to set your `OPENAI_API_KEY` in your `.env`. copy `.env.example` to `.env`.
+    ```bash
+    OPENAI_BASE_URL=
+    OPENAI_API_KEY=
+    OPENAI_MODEL=
+    OPENAI_EMBEDDING_API_KEY=
+    OPENAI_EMBEDDING_BASE_URL=
+    OPENAI_EMBEDDING_MODEL=
+    PGVECTOR_EMBEDDING_DIMENSIONS=1024
+    ```
+3.  **Launch the application**:
+    From the project root directory, run the following command:
+    ```bash
+    docker-compose up
+    ```
 
-## Learn More
+4.  **Access your AI knowledge base**:
+    Once everything is up and running, open your web browser and go to [http://localhost:3000](http://localhost:3000).
 
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+That's it! You're all set to start managing your snippets and chatting with your personal AI.

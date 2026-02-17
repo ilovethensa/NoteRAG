@@ -1,65 +1,170 @@
-import Image from "next/image";
+"use client";
+
+import { useReducer, useEffect } from 'react';
+import {
+  getSnippets,
+  createSnippet,
+  updateSnippet,
+  deleteSnippet,
+  Snippet,
+} from '@/lib/client';
+import { reducer, initialState } from './reducer';
+
+const SNIPPET_COLLAPSE_LENGTH = 200;
 
 export default function Home() {
+  const [state, dispatch] = useReducer(reducer, initialState);
+  const { snippets, newSnippet, editingId, editingContent, expandedSnippets } = state;
+
+  const fetchSnippets = async () => {
+    try {
+      const snippets = await getSnippets();
+      dispatch({ type: 'SET_SNIPPETS', payload: snippets });
+    } catch {
+      dispatch({ type: 'SET_ERROR', payload: 'Failed to fetch snippets' });
+    }
+  };
+
+  useEffect(() => {
+    fetchSnippets();
+  }, []);
+
+
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!newSnippet.trim()) return;
+    try {
+      await createSnippet(newSnippet);
+      dispatch({ type: 'SET_NEW_SNIPPET', payload: '' });
+      await fetchSnippets();
+    } catch {
+      dispatch({ type: 'SET_ERROR', payload: 'Failed to create snippet' });
+    }
+  };
+
+  const handleDelete = async (id: number) => {
+    try {
+      await deleteSnippet(id);
+      await fetchSnippets();
+    } catch {
+      dispatch({ type: 'SET_ERROR', payload: 'Failed to delete snippet' });
+    }
+  };
+
+  const handleEdit = (snippet: Snippet) => {
+    dispatch({ type: 'START_EDITING', payload: { id: snippet.id, content: snippet.content } });
+  };
+
+  const handleSave = async (id: number) => {
+    if (!editingContent.trim()) return;
+    try {
+      await updateSnippet(id, editingContent);
+      dispatch({ type: 'FINISH_EDITING' });
+      await fetchSnippets();
+    } catch {
+      dispatch({ type: 'SET_ERROR', payload: 'Failed to save snippet' });
+    }
+  };
+
+  const toggleSnippetExpansion = (id: number) => {
+    dispatch({ type: 'TOGGLE_SNIPPET_EXPANSION', payload: id });
+  };
+
   return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex min-h-screen w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
+    <div className="flex-grow flex flex-col p-6 max-w-5xl mx-auto w-full gap-y-12">
+      <section className="space-y-4">
+        <div className="flex items-center gap-2 text-white/50 text-xs uppercase tracking-[0.2em]">
+          <span className="w-2 h-2 bg-white animate-pulse" />
+          Add Snippet
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+        <form onSubmit={handleSubmit} className="relative group">
+          <textarea
+            className="w-full bg-black border border-white/20 p-4 text-white focus:outline-none focus:border-white/50 transition-colors resize-none font-mono"
+            rows={4}
+            value={newSnippet}
+            onChange={(e) => dispatch({ type: 'SET_NEW_SNIPPET', payload: e.target.value })}
+            placeholder="Type content to embed..."
+          />
+          <button
+            type="submit"
+            className="absolute bottom-4 right-4 bg-white text-black px-6 py-2 font-bold text-xs uppercase tracking-widest hover:bg-white/90 transition-colors"
           >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
+            Add
+          </button>
+        </form>
+      </section>
+
+      <section className="space-y-6 flex-grow flex flex-col">
+        <div className="flex items-center justify-between border-b border-white/10 pb-2">
+          <div className="flex items-center gap-2 text-white/50 text-xs uppercase tracking-[0.2em]">
+            Knowledge Base
+          </div>
+          <div className="text-[10px] text-white/30 uppercase">
+            Total: {snippets.length}
+          </div>
         </div>
-      </main>
+        
+        <ul className="grid grid-cols-1 gap-4 overflow-y-auto pr-2">
+          {snippets.map((snippet) => {
+            const isExpanded = expandedSnippets.has(snippet.id);
+            const isCollapsible = snippet.content.length > SNIPPET_COLLAPSE_LENGTH;
+            const displayedContent = isCollapsible && !isExpanded
+              ? snippet.content.substring(0, SNIPPET_COLLAPSE_LENGTH) + '...'
+              : snippet.content;
+
+            return (
+              <li key={snippet.id} className="border border-white/10 p-4 group hover:border-white/30 transition-colors flex flex-col gap-4">
+                {editingId === snippet.id ? (
+                  <textarea
+                    className="w-full bg-white/5 border border-white/20 p-2 text-white focus:outline-none focus:border-white/40 font-mono text-sm"
+                    rows={3}
+                    value={editingContent}
+                    onChange={(e) => dispatch({ type: 'SET_EDITING_CONTENT', payload: e.target.value })}
+                  />
+                ) : (
+                  <div className="text-sm leading-relaxed text-white/80 whitespace-pre-wrap">
+                    <span className="text-white/20 mr-2">#{snippet.id.toString().padStart(3, '0')}</span>
+                    {displayedContent}
+                    {isCollapsible && (
+                      <button 
+                        onClick={() => toggleSnippetExpansion(snippet.id)}
+                        className="text-[10px] uppercase text-blue-400 hover:text-blue-200 ml-2"
+                      >
+                        [{isExpanded ? 'Collapse' : 'Expand'}]
+                      </button>
+                    )}
+                  </div>
+                )}
+                
+                <div className="flex justify-end gap-3 opacity-0 group-hover:opacity-100 transition-opacity">
+                  {editingId === snippet.id ? (
+                    <button
+                      onClick={() => handleSave(snippet.id)}
+                      className="text-[10px] uppercase tracking-tighter border border-white/40 px-3 py-1 hover:bg-white hover:text-black transition-colors"
+                    >
+                      Save
+                    </button>
+                  ) : (
+                    <button
+                      onClick={() => handleEdit(snippet)}
+                      className="text-[10px] uppercase tracking-tighter border border-white/20 px-3 py-1 hover:border-white/40 transition-colors"
+                    >
+                      Edit
+                    </button>
+                  )}
+                  <button
+                    onClick={() => handleDelete(snippet.id)}
+                    className="text-[10px] uppercase tracking-tighter border border-red-900/50 text-red-500/70 px-3 py-1 hover:bg-red-500 hover:text-black transition-colors"
+                  >
+                    Delete
+                  </button>
+                </div>
+              </li>
+            );
+          })}
+        </ul>
+      </section>
     </div>
   );
 }

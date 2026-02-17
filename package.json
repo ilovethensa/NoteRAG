@@ -1,15 +1,23 @@
 {
-  "name": "rag",
+  "name": "noterag",
   "version": "0.1.0",
   "private": true,
   "scripts": {
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
+    "init": "bun run scripts/init.ts",
+    "start:prod": "bun run init && bun run start",
     "lint": "eslint"
   },
   "dependencies": {
+    "@langchain/community": "^1.1.15",
+    "@langchain/openai": "^1.2.7",
+    "@types/pg": "^8.16.0",
+    "langchain": "^1.2.24",
     "next": "16.1.6",
+    "openai": "^6.22.0",
+    "pg": "^8.18.0",
     "react": "19.2.3",
     "react-dom": "19.2.3"
   },

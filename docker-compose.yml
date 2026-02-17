@@ -1,0 +1,36 @@
+services:
+  db:
+    image: pgvector/pgvector:pg18-trixie
+    restart: always
+    environment:
+      - POSTGRES_DB=noterag
+      - POSTGRES_USER=noterag
+      - POSTGRES_PASSWORD=noterag
+      - PGVECTOR_EMBEDDING_DIMENSIONS=1536
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./temp/postgres:/var/lib/postgresql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U noterag"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  app:
+    build:
+      context: .
+      dockerfile: Containerfile
+    ports:
+      - "3000:3000"
+    environment:
+      - DATABASE_URL=postgresql:
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+      - OPENAI_BASE_URL=${OPENAI_BASE_URL}
+      - OPENAI_EMBEDDING_API_KEY=${OPENAI_EMBEDDING_API_KEY}
+      - OPENAI_EMBEDDING_BASE_URL=${OPENAI_EMBEDDING_BASE_URL}
+      - OPENAI_EMBEDDING_MODEL=${OPENAI_EMBEDDING_MODEL}
+      - OPENAI_MODEL=${OPENAI_MODEL}
+    depends_on:
+      db:
+        condition: service_healthy
