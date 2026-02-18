@@ -75,15 +75,15 @@ export default function Home() {
   };
 
   return (
-    <div className="flex-grow flex flex-col p-6 max-w-5xl mx-auto w-full gap-y-12">
+    <div className="flex-grow flex flex-col p-4 md:p-6 max-w-5xl mx-auto w-full gap-y-8 md:gap-y-12">
       <section className="space-y-4">
-        <div className="flex items-center gap-2 text-white/50 text-xs uppercase tracking-[0.2em]">
+        <div className="flex items-center gap-2 text-white/50 text-[10px] md:text-xs uppercase tracking-[0.2em]">
           <span className="w-2 h-2 bg-white animate-pulse" />
           Add Snippet
         </div>
         <form onSubmit={handleSubmit} className="relative group">
           <textarea
-            className="w-full bg-black border border-white/20 p-4 text-white focus:outline-none focus:border-white/50 transition-colors resize-none font-mono"
+            className="w-full bg-black border border-white/20 p-4 pb-14 md:pb-4 text-sm md:text-base text-white focus:outline-none focus:border-white/50 transition-colors resize-none font-mono"
             rows={4}
             value={newSnippet}
             onChange={(e) => dispatch({ type: 'SET_NEW_SNIPPET', payload: e.target.value })}
@@ -91,19 +91,19 @@ export default function Home() {
           />
           <button
             type="submit"
-            className="absolute bottom-4 right-4 bg-white text-black px-6 py-2 font-bold text-xs uppercase tracking-widest hover:bg-white/90 transition-colors"
+            className="absolute bottom-4 right-4 bg-white text-black px-4 md:px-6 py-2 font-bold text-[10px] md:text-xs uppercase tracking-widest hover:bg-white/90 transition-colors"
           >
             Add
           </button>
         </form>
       </section>
 
-      <section className="space-y-6 flex-grow flex flex-col">
+      <section className="space-y-6 flex-grow flex flex-col min-h-0">
         <div className="flex items-center justify-between border-b border-white/10 pb-2">
-          <div className="flex items-center gap-2 text-white/50 text-xs uppercase tracking-[0.2em]">
+          <div className="flex items-center gap-2 text-white/50 text-[10px] md:text-xs uppercase tracking-[0.2em]">
             Knowledge Base
           </div>
-          <div className="text-[10px] text-white/30 uppercase">
+          <div className="text-[9px] md:text-[10px] text-white/30 uppercase">
             Total: {snippets.length}
           </div>
         </div>
@@ -127,7 +127,7 @@ export default function Home() {
                   />
                 ) : (
                   <div className="text-sm leading-relaxed text-white/80 whitespace-pre-wrap">
-                    <span className="text-white/20 mr-2">#{snippet.id.toString().padStart(3, '0')}</span>
+                    <span className="text-white/20 mr-2 text-[10px] md:text-xs">#{snippet.id.toString().padStart(3, '0')}</span>
                     {displayedContent}
                     {isCollapsible && (
                       <button 
@@ -140,7 +140,7 @@ export default function Home() {
                   </div>
                 )}
                 
-                <div className="flex justify-end gap-3 opacity-0 group-hover:opacity-100 transition-opacity">
+                <div className="flex justify-end gap-3 md:opacity-0 group-hover:opacity-100 transition-opacity">
                   {editingId === snippet.id ? (
                     <button
                       onClick={() => handleSave(snippet.id)}

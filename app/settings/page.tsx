@@ -86,18 +86,18 @@ export default function Settings() {
   };
 
   return (
-    <div className="flex-grow flex flex-col p-6 max-w-5xl mx-auto w-full gap-y-12">
+    <div className="flex-grow flex flex-col p-4 md:p-6 max-w-5xl mx-auto w-full gap-y-8 md:gap-y-12">
       <section className="space-y-4">
-        <div className="flex items-center gap-2 text-white/70 text-xs uppercase tracking-[0.2em]">
+        <div className="flex items-center gap-2 text-white/70 text-[10px] md:text-xs uppercase tracking-[0.2em]">
           <span className="w-2 h-2 bg-white animate-pulse" />
           System Settings
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6 pt-4">
           {/* Export Section */}
-          <div className="border border-white/20 p-6 space-y-4 bg-white/[0.05]">
-            <h3 className="text-[10px] uppercase tracking-[0.2em] font-bold text-white">Export_Knowledge_Base</h3>
-            <p className="text-[11px] text-white/60 leading-relaxed font-mono">
+          <div className="border border-white/20 p-4 md:p-6 space-y-4 bg-white/[0.05]">
+            <h3 className="text-[9px] md:text-[10px] uppercase tracking-[0.2em] font-bold text-white">Export_Knowledge_Base</h3>
+            <p className="text-[10px] md:text-[11px] text-white/60 leading-relaxed font-mono">
               Saves current snippets as a structured JSON file for backup or relocation.
             </p>
             <button
@@ -110,9 +110,9 @@ export default function Settings() {
           </div>
 
           {/* Import Section */}
-          <div className="border border-white/20 p-6 space-y-4 bg-white/[0.05]">
-            <h3 className="text-[10px] uppercase tracking-[0.2em] font-bold text-white">Import_Knowledge_Base</h3>
-            <p className="text-[11px] text-white/60 leading-relaxed font-mono">
+          <div className="border border-white/20 p-4 md:p-6 space-y-4 bg-white/[0.05]">
+            <h3 className="text-[9px] md:text-[10px] uppercase tracking-[0.2em] font-bold text-white">Import_Knowledge_Base</h3>
+            <p className="text-[10px] md:text-[11px] text-white/60 leading-relaxed font-mono">
               Injects snippets from a JSON export into the current database.
             </p>
             <button

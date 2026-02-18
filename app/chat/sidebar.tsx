@@ -22,6 +22,8 @@ interface SidebarProps {
   onDeleteThread: (threadId: number) => void;
   onRenameThread: (threadId: number, newName: string) => void;
   fetchThreads: () => Promise<void>;
+  isOpen?: boolean;
+  onClose?: () => void;
 }
 
 export default function Sidebar({
@@ -34,6 +36,8 @@ export default function Sidebar({
   onDeleteThread,
   onRenameThread,
   fetchThreads,
+  isOpen = false,
+  onClose,
 }: SidebarProps) {
   const [editingThreadId, setEditingThreadId] = useState<number | null>(null);
   const [editingThreadName, setEditingThreadName] = useState<string>('');
@@ -59,16 +63,31 @@ export default function Sidebar({
   };
 
   return (
-    <div className="flex flex-col w-64 border-r border-white/20 bg-black">
+    <div className={`
+      ${isOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'}
+      fixed md:relative z-50 md:z-auto
+      flex flex-col w-64 h-full border-r border-white/20 bg-black
+      transition-transform duration-300 ease-in-out
+    `}>
       <div className="p-4 border-b border-white/20 flex items-center justify-between">
         <h2 className="text-lg font-bold">Threads</h2>
-        <button
-          className="text-white/50 hover:text-white transition-colors"
-          onClick={onNewThread}
-          disabled={loading}
-        >
-          [New]
-        </button>
+        <div className="flex items-center space-x-2">
+          <button
+            className="text-white/50 hover:text-white transition-colors"
+            onClick={onNewThread}
+            disabled={loading}
+          >
+            [New]
+          </button>
+          {onClose && (
+            <button
+              className="md:hidden text-white/50 hover:text-white transition-colors"
+              onClick={onClose}
+            >
+              [Close]
+            </button>
+          )}
+        </div>
       </div>
       <div className="flex-grow overflow-y-auto">
         {loading && threads.length === 0 && (

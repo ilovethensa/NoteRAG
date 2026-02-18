@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useCallback, useReducer, Suspense } from 'react';
+import { useEffect, useRef, useCallback, useReducer, Suspense, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { chatReducer, initialChatState } from './reducer';
 import {
@@ -18,6 +18,7 @@ import Sidebar from './sidebar';
 
 function ChatContentComponent() {
   const [state, dispatch] = useReducer(chatReducer, initialChatState);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
   const {
     messages,
     input,
@@ -96,6 +97,7 @@ function ChatContentComponent() {
       dispatch({ type: 'RESET_CHAT' });
       dispatch({ type: 'SET_CURRENT_THREAD', payload: { id: newThread.threadId, name: newThread.name } });
       fetchThreads();
+      setSidebarOpen(false); // Close sidebar on mobile after starting new thread
     } catch (err: unknown) {
       dispatch({ type: 'SET_ERROR', payload: getErrorMessage(err) });
     } finally {
@@ -107,6 +109,7 @@ function ChatContentComponent() {
     dispatch({ type: 'SET_CURRENT_THREAD', payload: { id: thread.id, name: thread.name } });
     dispatch({ type: 'SET_MESSAGES', payload: [] });
     router.push(`/chat?thread_id=${thread.id}`);
+    setSidebarOpen(false); // Close sidebar on mobile after selection
   };
 
   const handleDeleteThread = async (threadId: number) => {
@@ -185,7 +188,15 @@ function ChatContentComponent() {
   };
 
   return (
-    <div className="flex flex-grow overflow-hidden">
+    <div className="flex flex-grow overflow-hidden relative">
+      {/* Mobile Sidebar Overlay */}
+      {sidebarOpen && (
+        <div
+          className="fixed inset-0 bg-black/50 z-40 md:hidden"
+          onClick={() => setSidebarOpen(false)}
+        />
+      )}
+      
       <Sidebar
         threads={threads}
         currentThreadId={currentThreadId}
@@ -196,9 +207,25 @@ function ChatContentComponent() {
         onDeleteThread={handleDeleteThread}
         onRenameThread={handleRenameThread}
         fetchThreads={fetchThreads}
+        isOpen={sidebarOpen}
+        onClose={() => setSidebarOpen(false)}
       />
-      <div className="flex-1 flex flex-col bg-black">
-        <div className="flex-grow overflow-y-auto p-6 space-y-8 font-mono">
+      
+      <div className="flex-1 flex flex-col bg-black w-full min-w-0">
+        {/* Mobile Header Toggle */}
+        <div className="md:hidden border-b border-white/20 p-4 flex items-center bg-black">
+          <button
+            onClick={() => setSidebarOpen(true)}
+            className="text-xs uppercase tracking-widest border border-white/20 px-3 py-1.5"
+          >
+            [Threads]
+          </button>
+          <span className="ml-4 text-xs font-bold truncate opacity-50">
+            {currentThreadName || 'New Chat'}
+          </span>
+        </div>
+
+        <div className="flex-grow overflow-y-auto p-4 md:p-6 space-y-6 md:space-y-8 font-mono">
           {loading && messages.length === 0 && (
             <div className="space-y-8 animate-pulse">
               {[1, 2].map((i) => (
@@ -213,24 +240,24 @@ function ChatContentComponent() {
           {!loading && messages.length === 0 && (
             <div className="h-full flex flex-col items-center justify-center opacity-20 text-center space-y-4">
               <div className="text-4xl">_</div>
-              <div className="text-xs uppercase tracking-widest">Awaiting_User_Input</div>
+              <div className="text-[10px] md:text-xs uppercase tracking-widest">Awaiting_User_Input</div>
             </div>
           )}
 
           {messages.map((msg, index) => (
             <div key={index} className="flex flex-col gap-2 animate-in">
               <div className="flex items-center gap-2">
-                <span className={`text-[10px] uppercase font-bold px-2 py-0.5 ${
+                <span className={`text-[9px] md:text-[10px] uppercase font-bold px-2 py-0.5 ${
                   msg.role === 'user' ? 'bg-white text-black' : 'bg-white/20 text-white'
                 }`}>
                   {msg.role === 'user' ? 'USER_INPUT' : 'SYSTEM_REPLY'}
                 </span>
-                <span className="text-[9px] text-white/20 tracking-tighter">
+                <span className="text-[8px] md:text-[9px] text-white/20 tracking-tighter">
                   TIMESTAMP: {new Date().toLocaleTimeString()}
                 </span>
               </div>
 
-              <div className={`text-sm leading-relaxed p-4 border ${
+              <div className={`text-sm leading-relaxed p-3 md:p-4 border ${
                 msg.role === 'user' ? 'border-white/20 bg-white/5' : 'border-white/10'
               }`}>
                 {msg.content}
@@ -238,12 +265,12 @@ function ChatContentComponent() {
 
               {msg.context && msg.context.length > 0 && (
                 <div className="mt-2 border-l border-white/20 pl-4 py-2 space-y-2">
-                  <div className="text-[9px] uppercase tracking-widest text-white/40 font-bold">
+                  <div className="text-[8px] md:text-[9px] uppercase tracking-widest text-white/40 font-bold">
                     [Retrieved_Source_Fragments]
                   </div>
                   <ul className="space-y-2">
                     {msg.context.map((ctx, i) => (
-                      <li key={i} className="text-[10px] text-white/30 leading-normal border-b border-white/5 pb-1 italic">
+                      <li key={i} className="text-[9px] md:text-[10px] text-white/30 leading-normal border-b border-white/5 pb-1 italic">
                         &gt; {ctx}
                       </li>
                     ))}
@@ -256,22 +283,22 @@ function ChatContentComponent() {
           {isQuerying && (
             <div className="flex flex-col gap-2 animate-pulse">
               <div className="flex items-center gap-2">
-                <span className="text-[10px] uppercase font-bold px-2 py-0.5 bg-white/20 text-white">
+                <span className="text-[9px] md:text-[10px] uppercase font-bold px-2 py-0.5 bg-white/20 text-white">
                   SYSTEM_REPLY
                 </span>
               </div>
-              <div className="text-sm p-4 border border-white/10 italic text-white/40">
+              <div className="text-sm p-3 md:p-4 border border-white/10 italic text-white/40">
                 Processing_Query...
               </div>
             </div>
           )}
-          {error && <div className="text-red-500 text-sm font-mono mt-4">Error: {error}</div>}
+          {error && <div className="text-red-500 text-xs md:text-sm font-mono mt-4">Error: {error}</div>}
           <div ref={messagesEndRef} />
         </div>
         <div className="border-t border-white/20 p-4 flex gap-2">
           <input
             type="text"
-            className="flex-grow bg-white/10 px-4 py-2 text-sm focus:outline-none"
+            className="flex-grow bg-white/10 px-4 py-2 text-sm focus:outline-none min-w-0"
             placeholder="Type your message..."
             value={input}
             onChange={(e) => dispatch({ type: 'SET_INPUT', payload: e.target.value })}
@@ -283,7 +310,7 @@ function ChatContentComponent() {
             disabled={loading}
           />
           <button
-            className="bg-white text-black px-4 py-2 text-sm uppercase tracking-widest disabled:opacity-50"
+            className="bg-white text-black px-4 py-2 text-sm uppercase tracking-widest disabled:opacity-50 whitespace-nowrap"
             onClick={handleSendMessage}
             disabled={loading}
           >
@@ -297,8 +324,8 @@ function ChatContentComponent() {
 
 function ChatSkeleton() {
   return (
-    <div className="flex flex-grow overflow-hidden animate-pulse">
-      <div className="flex flex-col w-64 border-r border-white/20 bg-black">
+    <div className="flex flex-grow overflow-hidden relative animate-pulse">
+      <div className="hidden md:flex flex-col w-64 border-r border-white/20 bg-black">
         <div className="p-4 border-b border-white/20 h-[61px] flex items-center">
           <div className="h-4 w-24 bg-white/10 rounded"></div>
         </div>
@@ -309,7 +336,10 @@ function ChatSkeleton() {
         </div>
       </div>
       <div className="flex-1 flex flex-col bg-black">
-        <div className="flex-grow p-6 space-y-8">
+        <div className="md:hidden border-b border-white/20 p-4 h-[61px] bg-black">
+          <div className="h-6 w-20 bg-white/10 rounded"></div>
+        </div>
+        <div className="flex-grow p-4 md:p-6 space-y-8">
           {[1, 2].map((i) => (
             <div key={i} className="space-y-4">
               <div className="h-3 w-32 bg-white/10 rounded"></div>

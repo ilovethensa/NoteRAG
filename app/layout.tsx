@@ -31,13 +31,13 @@ export default function RootLayout({
       <body
         className={`${geistMono.variable} font-mono antialiased bg-black text-white min-h-screen flex flex-col`}
       >
-        <nav className="border-b border-white/20 px-6 py-4 flex items-center justify-between">
-          <div className="flex items-center space-x-8">
-            <span className="font-bold tracking-tighter text-xl">NoteRAG</span>
-            <div className="flex space-x-6">
+        <nav className="border-b border-white/20 px-4 md:px-6 py-4 flex items-center justify-between">
+          <div className="flex items-center space-x-4 md:space-x-8">
+            <span className="font-bold tracking-tighter text-lg md:text-xl">NoteRAG</span>
+            <div className="flex space-x-3 md:space-x-6">
               {NAV_ITEMS.map((item) => (
                 <Link key={item.path} href={item.path}>
-                  <span className="text-sm uppercase tracking-widest hover:text-white/70 transition-colors">
+                  <span className="text-[10px] md:text-sm uppercase tracking-widest hover:text-white/70 transition-colors">
                     [{item.label}]
                   </span>
                 </Link>
