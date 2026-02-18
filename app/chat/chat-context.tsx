@@ -15,8 +15,13 @@ import {
 import { getErrorMessage } from '@/lib/utils';
 import { chatReducer, initialChatState, ChatState, ChatAction } from './reducer'; // Assuming reducer.ts is in the same directory
 
+// Define a type for the context value that includes the ref
+export type ChatContextValue = ChatState & {
+  messagesEndRef: React.RefObject<HTMLDivElement | null>;
+};
+
 // Create the context
-const ChatStateContext = createContext<ChatState | undefined>(undefined);
+const ChatStateContext = createContext<ChatContextValue | undefined>(undefined);
 const ChatDispatchContext = createContext<React.Dispatch<ChatAction> | undefined>(undefined);
 
 // Custom hook to use the chat state

@@ -206,7 +206,6 @@ function ChatContentComponent() {
         onNewThread={handleStartNewThread}
         onDeleteThread={handleDeleteThread}
         onRenameThread={handleRenameThread}
-        fetchThreads={fetchThreads}
         isOpen={sidebarOpen}
         onClose={() => setSidebarOpen(false)}
       />

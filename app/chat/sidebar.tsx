@@ -1,16 +1,9 @@
 "use client";
 
-import { useCallback, useState } from 'react';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useState } from 'react';
 import {
-  fetchThreads as apiFetchThreads,
-  startNewThread as apiStartNewThread,
-  deleteChatThread as apiDeleteChatThread,
-  renameChatThread as apiRenameChatThread,
   ChatThread,
 } from '@/lib/client';
-import { getErrorMessage } from '@/lib/utils';
-import { useChatState } from './chat-context'; // Assuming a context for chat state
 
 interface SidebarProps {
   threads: ChatThread[];
@@ -21,7 +14,6 @@ interface SidebarProps {
   onNewThread: () => void;
   onDeleteThread: (threadId: number) => void;
   onRenameThread: (threadId: number, newName: string) => void;
-  fetchThreads: () => Promise<void>;
   isOpen?: boolean;
   onClose?: () => void;
 }
@@ -35,7 +27,6 @@ export default function Sidebar({
   onNewThread,
   onDeleteThread,
   onRenameThread,
-  fetchThreads,
   isOpen = false,
   onClose,
 }: SidebarProps) {
