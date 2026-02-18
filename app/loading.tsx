@@ -1,14 +1,19 @@
 export default function RootLoading() {
   return (
-    <div className="flex-grow flex flex-col items-center justify-center space-y-4 animate-in fade-in duration-500">
-      <div className="flex items-center gap-3">
-        <div className="w-2 h-2 bg-white animate-[ping_1s_linear_infinite]" />
-        <div className="w-2 h-2 bg-white animate-[ping_1s_linear_infinite_0.2s]" />
-        <div className="w-2 h-2 bg-white animate-[ping_1s_linear_infinite_0.4s]" />
+    <div className="flex-grow flex flex-col items-center justify-center space-y-6 animate-in fade-in duration-700">
+      <div className="relative w-12 h-12">
+        <div className="absolute inset-0 border border-white/10" />
+        <div className="absolute inset-0 border-t-2 border-white animate-[spin_1.5s_linear_infinite]" />
       </div>
-      <div className="text-[10px] uppercase tracking-[0.3em] text-white/40 font-mono">
-        System_Initializing...
+      <div className="flex flex-col items-center gap-2">
+        <div className="text-[10px] uppercase tracking-[0.4em] text-white font-bold animate-pulse">
+          Initializing_System
+        </div>
+        <div className="text-[8px] uppercase tracking-[0.2em] text-white/30 font-mono">
+          Loading_Kernel_Modules...
+        </div>
       </div>
     </div>
   );
 }
+

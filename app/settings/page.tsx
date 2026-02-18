@@ -86,7 +86,7 @@ export default function Settings() {
   };
 
   return (
-    <div className="flex-grow flex flex-col p-4 md:p-6 max-w-5xl mx-auto w-full gap-y-8 md:gap-y-12">
+    <div className="flex-grow flex flex-col p-4 md:p-6 max-w-5xl mx-auto w-full gap-y-8 md:gap-y-12 overflow-y-auto custom-scrollbar">
       <section className="space-y-4">
         <div className="flex items-center gap-2 text-white/70 text-[10px] md:text-xs uppercase tracking-[0.2em]">
           <span className="w-2 h-2 bg-white animate-pulse" />

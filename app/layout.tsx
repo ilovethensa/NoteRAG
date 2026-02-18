@@ -29,7 +29,7 @@ export default function RootLayout({
   return (
     <html lang="en" className="bg-black">
       <body
-        className={`${geistMono.variable} font-mono antialiased bg-black text-white min-h-screen flex flex-col`}
+        className={`${geistMono.variable} font-mono antialiased bg-black text-white h-screen flex flex-col overflow-hidden`}
       >
         <nav className="border-b border-white/20 px-4 md:px-6 py-4 flex items-center justify-between">
           <div className="flex items-center space-x-4 md:space-x-8">
@@ -45,7 +45,7 @@ export default function RootLayout({
             </div>
           </div>
         </nav>
-        <main className="flex-grow flex flex-col">
+        <main className="flex-grow flex flex-col min-h-0">
           {children}
         </main>
       </body>
