@@ -94,12 +94,16 @@ export const countMessagesInThread = async (
   return parseInt(result[0].count, 10);
 };
 
-const initializeVectorStore = () => {
+let pgVectorStore: PGVectorStore | null = null;
+
+const getVectorStore = () => {
+  if (pgVectorStore) return pgVectorStore;
+
   if (!process.env.OPENAI_API_KEY) {
     throw new Error("OPENAI_API_KEY is not configured");
   }
 
-  return new PGVectorStore(embeddings, {
+  pgVectorStore = new PGVectorStore(embeddings, {
     pool,
     tableName: "snippets",
     columns: {
@@ -108,9 +112,8 @@ const initializeVectorStore = () => {
       vectorColumnName: "embedding",
     },
   });
+  return pgVectorStore;
 };
-
-const pgVectorStore = initializeVectorStore();
 
 const buildPrompt = (query: string, relevantDocs: string) => `
   You are an AI assistant. Use the following pieces of context to answer the user's question.
@@ -142,7 +145,8 @@ const formatAnswer = (
 };
 
 export const QueryRAG = async (query: string, threadId?: string | number) => {
-  const results = await pgVectorStore.similaritySearch(query, 5);
+  const store = getVectorStore();
+  const results = await store.similaritySearch(query, 5);
   const relevantDocs = results
     .map((doc) => doc.pageContent.replace(/`/g, "\\`"))
     .join("\\n\\n");
