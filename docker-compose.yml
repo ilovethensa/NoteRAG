@@ -3,16 +3,16 @@ services:
     image: pgvector/pgvector:pg18-trixie
     restart: always
     environment:
-      - POSTGRES_DB=noterag
-      - POSTGRES_USER=noterag
-      - POSTGRES_PASSWORD=noterag
-      - PGVECTOR_EMBEDDING_DIMENSIONS=1536
+      - POSTGRES_DB=${POSTGRES_DB:-noterag}
+      - POSTGRES_USER=${POSTGRES_USER:-noterag}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-noterag}
+      - PGVECTOR_EMBEDDING_DIMENSIONS=${PGVECTOR_EMBEDDING_DIMENSIONS:-1536}
     ports:
       - "5432:5432"
     volumes:
-      - ./temp/postgres:/var/lib/postgresql
+      - ./postgres:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U noterag"]
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-noterag}"]
       interval: 5s
       timeout: 5s
       retries: 5
@@ -24,7 +24,7 @@ services:
     ports:
       - "3000:3000"
     environment:
-      - DATABASE_URL=postgresql:
+      - DATABASE_URL=postgresql://${POSTGRES_USER:-noterag}:${POSTGRES_PASSWORD:-noterag}@db:5432/${POSTGRES_DB:-noterag}
       - OPENAI_API_KEY=${OPENAI_API_KEY}
       - OPENAI_BASE_URL=${OPENAI_BASE_URL}
       - OPENAI_EMBEDDING_API_KEY=${OPENAI_EMBEDDING_API_KEY}

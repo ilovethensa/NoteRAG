@@ -9,6 +9,9 @@ FROM base AS builder
 COPY --from=deps /usr/src/app/node_modules ./node_modules
 COPY . .
 ENV NODE_ENV=production
+# Provide dummy env vars for build time static analysis
+ENV OPENAI_API_KEY=dummy
+ENV DATABASE_URL=postgresql://dummy:dummy@localhost:5432/dummy
 RUN bun run build
 
 FROM base AS runner
