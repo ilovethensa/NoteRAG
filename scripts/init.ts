@@ -13,7 +13,7 @@ async function main() {
       CREATE TABLE IF NOT EXISTS snippets (
         id SERIAL PRIMARY KEY,
         content TEXT NOT NULL,
-        embedding VECTOR(${process.env.PGVECTOR_EMBEDDING_DIMENSIONS || '1536'})
+        embedding VECTOR(${process.env.PGVECTOR_EMBEDDING_DIMENSIONS || '1024'})
       );
     `);
     console.log('Snippets table initialized.');

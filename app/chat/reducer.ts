@@ -5,6 +5,7 @@ export type ChatState = {
   messages: Message[];
   input: string;
   loading: boolean;
+  isQuerying: boolean;
   threads: ChatThread[];
   currentThreadId: number | null;
   currentThreadName: string;
@@ -18,6 +19,7 @@ export type ChatAction =
   | { type: 'ADD_MESSAGE'; payload: Message }
   | { type: 'SET_INPUT'; payload: string }
   | { type: 'SET_LOADING'; payload: boolean }
+  | { type: 'SET_IS_QUERYING'; payload: boolean }
   | { type: 'SET_THREADS'; payload: ChatThread[] }
   | { type: 'SET_CURRENT_THREAD'; payload: { id: number | null; name: string } }
   | { type: 'SET_EDITING_THREAD'; payload: { id: number | null; name: string } }
@@ -28,6 +30,7 @@ export const initialChatState: ChatState = {
   messages: [],
   input: '',
   loading: false,
+  isQuerying: false,
   threads: [],
   currentThreadId: null,
   currentThreadName: 'New Chat',
@@ -46,6 +49,8 @@ export const chatReducer = (state: ChatState, action: ChatAction): ChatState => 
       return { ...state, input: action.payload };
     case 'SET_LOADING':
       return { ...state, loading: action.payload };
+    case 'SET_IS_QUERYING':
+      return { ...state, isQuerying: action.payload };
     case 'SET_THREADS':
       return { ...state, threads: action.payload };
     case 'SET_CURRENT_THREAD':

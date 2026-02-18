@@ -44,6 +44,9 @@ export default function Home() {
   };
 
   const handleDelete = async (id: number) => {
+    if (!confirm('Are you sure you want to delete this snippet? This action cannot be undone.')) {
+      return;
+    }
     try {
       await deleteSnippet(id);
       await fetchSnippets();
