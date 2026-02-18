@@ -1,6 +1,6 @@
 import { PoolClient } from "pg";
 import { PGVectorStore } from "@langchain/community/vectorstores/pgvector";
-import { pool, embeddings, llm, executeQuery, withTransaction } from "./server-utils";
+import { pool, embeddings, llm, executeQuery, withTransaction, recordTokenUsage } from "./server-utils";
 
 export type Message = {
   role: "user" | "assistant" | "system";
@@ -164,6 +164,11 @@ export const QueryRAG = async (query: string, threadId?: string | number) => {
   ];
 
   const chatCompletion = await llm.invoke(messages);
+  const usage = chatCompletion.usage_metadata;
+  if (usage) {
+    await recordTokenUsage('chat', usage.total_tokens);
+  }
+
   const answer = formatAnswer(chatCompletion.content);
 
   if (threadId) {

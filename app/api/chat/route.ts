@@ -9,7 +9,7 @@ import {
   clearAllChats,
   countMessagesInThread,
 } from '@/lib/ai';
-import { openai, withTransaction } from '@/lib/server-utils';
+import { openai, withTransaction, recordTokenUsage } from '@/lib/server-utils';
 
 export async function GET(req: NextRequest) {
   const threadId = req.nextUrl.searchParams.get('thread_id');
@@ -59,6 +59,11 @@ export async function POST(req: NextRequest) {
       });
 
       const assistantMessage = chatCompletion.choices[0]?.message;
+      const usage = chatCompletion.usage;
+
+      if (usage) {
+        await recordTokenUsage('chat', usage.total_tokens, client);
+      }
 
       if (assistantMessage) {
         const userMessage = messages[messages.length - 1];

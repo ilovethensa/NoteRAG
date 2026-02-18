@@ -40,6 +40,16 @@ async function main() {
     `);
     console.log('Chat history table initialized.');
 
+    await client.query(`
+      CREATE TABLE IF NOT EXISTS token_usage (
+        id SERIAL PRIMARY KEY,
+        type TEXT NOT NULL, -- 'chat' or 'embedding'
+        tokens INTEGER NOT NULL,
+        timestamp TIMESTAMPTZ DEFAULT NOW()
+      );
+    `);
+    console.log('Token usage table initialized.');
+
     console.log('Database schema fully initialized successfully.');
 
   } finally {

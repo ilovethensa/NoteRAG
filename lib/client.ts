@@ -110,6 +110,14 @@ export const deleteChatThread = async (threadId: number): Promise<void> => {
   }
 };
 
+export const fetchStats = async (): Promise<{ chat: number; embedding: number }> => {
+  const res = await fetch("/api/stats");
+  if (!res.ok) {
+    throw new Error("Failed to fetch stats");
+  }
+  return res.json();
+};
+
 export const renameChatThread = async (
   threadId: number,
   newName: string,

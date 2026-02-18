@@ -1,4 +1,4 @@
-import { embeddings, executeQuery } from "./server-utils";
+import { embeddings, executeQuery, countTokens, recordTokenUsage } from "./server-utils";
 
 export type Snippet = {
   id: number;
@@ -10,6 +10,8 @@ const generateEmbedding = async (content: string) => {
     throw new Error("OPENAI_API_KEY is not configured");
   }
   const snippetEmbedding = await embeddings.embedQuery(content);
+  const tokens = countTokens(content);
+  await recordTokenUsage('embedding', tokens);
   return "[" + snippetEmbedding.join(",") + "]";
 };
 

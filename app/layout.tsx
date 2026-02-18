@@ -17,7 +17,8 @@ export const metadata: Metadata = {
 
 const NAV_ITEMS = [
   { path: "/", label: "Add" },
-  { path: "/chat", label: "Chat" }, 
+  { path: "/chat", label: "Chat" },
+  { path: "/settings", label: "Settings" },
 ];
 
 export default function RootLayout({
